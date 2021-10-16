@@ -1,5 +1,6 @@
 ```js
 import { Cache, middleware } from "express-http-redis";
+import { ICache } from "express-http-redis/types";
 
 new Cache({
   host: process.env.HOST,
