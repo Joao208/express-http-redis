@@ -5,8 +5,10 @@
   "typings": "./src/index.ts",
   "main": "dist/index.js",
   "author": "@joao208",
+  "repository": "https://github.com/Joao208/express-http-redis",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "example": "ts-node src/example/index.ts",
     "build:version": "npm version patch",
     "build:path": "tsc --build",
     "build": "npm run build:version && npm run build:path"
@@ -16,12 +18,14 @@
     "@types/express": "^4.17.13",
     "@types/ioredis": "^4.27.7",
     "@types/node": "^16.11.0",
+    "@types/response-time": "^2.3.5",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "ioredis": "^4.28.0",
     "redis": "^3.1.2",
+    "response-time": "^2.3.2",
     "ts-node": "^10.3.0",
     "tsc": "^2.0.3",
     "typescript": "^4.4.4"

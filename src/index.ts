@@ -1,11 +1,15 @@
 import Redis from "ioredis";
 import { NextFunction, Request, Response } from "express";
-import { IInit, IObj, ICache, IBody } from "./types";
+import { IInit, IObj, ICache } from "./types";
 
 export const cache = {} as ICache;
 
 export class Cache {
   constructor({ host, port, keyPrefix, password }: IInit) {
+    if (!(host && port && keyPrefix && password)) {
+      throw new Error("Host, port, keyPrefix and password must be necessary");
+    }
+
     const redis = new Redis({
       host,
       port: parseFloat(port),
@@ -36,7 +40,7 @@ export class Cache {
     cache.get = async (key) => {
       const cached = await redis.get(key);
 
-      return cached ? JSON.parse(cached) : { users: [] };
+      return cached ? JSON.parse(cached) : { data: [] };
     };
 
     cache.invalidate = (key) => {
@@ -45,27 +49,27 @@ export class Cache {
   }
 }
 
-const GET = async () => {
-  return cache.get("users");
+const GET = async (req: Request) => {
+  return cache.get(req.url + ":" + JSON.stringify(req.query));
 };
 
-const POST = async (body: Object) => {
-  const { users } = await cache.get("users");
+// const POST = async (body: Object) => {
+//   const { users } = await cache.get("users");
 
-  cache.invalidate("users");
-  cache.set("users", { users: [...users, body] });
-};
+//   cache.invalidate("users");
+//   cache.set("users", { users: [...users, body] });
+// };
 
-const DELETE = async (body: IBody) => {
-  const { UserId } = body;
+// const DELETE = async (body: IBody) => {
+//   const { UserId } = body;
 
-  const { users } = await cache.get("users");
+//   const { users } = await cache.get("users");
 
-  const deletedUsers = users.filter(({ id }: { id: number }) => id !== UserId);
+//   const deletedUsers = users.filter(({ id }: { id: number }) => id !== UserId);
 
-  cache.invalidate("users");
-  cache.set("users", { users: deletedUsers });
-};
+//   cache.invalidate("users");
+//   cache.set("users", { users: deletedUsers });
+// };
 
 export const middleware = async (
   req: Request,
@@ -76,19 +80,21 @@ export const middleware = async (
 
   const obj = {
     GET,
-    POST,
-    DELETE,
+    // POST,
+    // DELETE,
   } as IObj;
 
-  if (["GET"].includes(method)) {
-    const response = await obj[method](req.body);
+  if (!obj[method]) return next();
 
-    if (response && response.users.length) {
+  if (["GET"].includes(method)) {
+    const response = await obj[method](req);
+
+    if (response && response.data.length) {
       return res.status(200).json(response);
     }
   }
 
-  await obj[method](req.body);
+  await obj[method](req);
 
-  next();
+  return next();
 };
