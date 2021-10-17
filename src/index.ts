@@ -2,6 +2,8 @@ import Redis from "ioredis";
 import { NextFunction, Request, Response } from "express";
 import { IInit, IObj, ICache } from "./types";
 
+export * from "./types";
+
 export const cache = {} as ICache;
 
 export class Cache {
