@@ -1,6 +1,6 @@
 {
   "name": "express-http-redis",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "license": "MIT",
   "typings": "./src/index.ts",
   "main": "dist/index.js",
