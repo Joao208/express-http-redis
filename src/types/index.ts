@@ -1,12 +1,8 @@
 import { Request } from "express";
 export interface ICache {
   set(key: string, value: Object, expiresIn?: number | undefined): void;
-  get(key: string): Promise<IGet>;
+  get(key: string): Promise<string>;
   invalidate(key: string): void;
-}
-
-export interface IGet {
-  data: Array<Object>;
 }
 
 export interface IInit {
@@ -17,5 +13,5 @@ export interface IInit {
 }
 
 export interface IObj {
-  [key: string]: (req: Request) => Promise<IGet | void>;
+  [key: string]: (req: Request) => Promise<string | void>;
 }
