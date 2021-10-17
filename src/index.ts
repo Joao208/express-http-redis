@@ -83,10 +83,11 @@ export const middleware = async (
   const chunks = [] as Array<Buffer>;
 
   res.end = function (chunk) {
+    console.log(chunk);
     if (chunk) chunks.push(chunk);
 
     const body = Buffer.concat(chunks).toString("utf8");
-
+    console.log(body);
     cache.set(req.url, body);
 
     // @ts-ignore
@@ -104,8 +105,8 @@ export const middleware = async (
   if (["GET"].includes(method)) {
     const response = await obj[method](req);
 
-    if (response && response.data.length) {
-      return res.status(200).json(response.data);
+    if (response) {
+      return res.status(200).json(response);
     }
   }
 
