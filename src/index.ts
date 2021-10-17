@@ -107,7 +107,9 @@ export const middleware = async (
     const response = await obj[method](req);
 
     if (response) {
-      return res.status(200).json(JSON.parse(response));
+      return res
+        .status(200)
+        .json(typeof response === "string" ? JSON.parse(response) : response);
     }
   }
 
