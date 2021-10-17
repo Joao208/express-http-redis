@@ -90,7 +90,7 @@ export const middleware = async (
     const response = await obj[method](req);
 
     if (response && response.data.length) {
-      return res.status(200).json(response);
+      return res.status(200).json(response.data);
     }
   }
 
