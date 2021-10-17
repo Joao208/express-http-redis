@@ -33,7 +33,7 @@ app.use(middleware);
 app.all("/", (req, res) => {
   const users = [{ id: 10, name: "User" }];
 
-  cache.set(req.url + ":" + JSON.stringify(req.query), { data: users });
+  cache.set(req.url, { data: users });
   return res.json("ok");
 });
 

@@ -50,7 +50,7 @@ export class Cache {
 }
 
 const GET = async (req: Request) => {
-  return cache.get(req.url + ":" + JSON.stringify(req.query));
+  return cache.get(req.url);
 };
 
 // const POST = async (body: Object) => {
