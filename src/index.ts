@@ -82,16 +82,18 @@ export const middleware = async (
 
   const chunks = [] as Array<Buffer>;
 
-  res.end = function (chunk) {
-    if (chunk) chunks.push(chunk);
+  if (req.method === "GET") {
+    res.end = function (chunk) {
+      if (chunk) chunks.push(chunk);
 
-    const body = Buffer.concat(chunks).toString("utf8");
+      const body = Buffer.concat(chunks).toString("utf8");
 
-    cache.set(req.url, body);
+      cache.set(req.url, body);
 
-    // @ts-ignore
-    oldEnd.apply(res, arguments);
-  };
+      // @ts-ignore
+      oldEnd.apply(res, arguments);
+    };
+  }
 
   const obj = {
     GET,
