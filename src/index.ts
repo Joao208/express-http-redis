@@ -12,12 +12,18 @@ const alreadyAdded = async (key: string): Promise<void> => {
   if (await cache.get(key)) cache.delete(key);
 };
 
-export const createKeyString = (req: Request) => {
+interface IRequest extends Request {
+  [key: string]: any;
+}
+
+export const createKeyString = (req: IRequest) => {
   const keysToAdd = [];
 
   for (const k of redisKeys) {
-    const params = // @ts-ignore
-      req[k.split(".")[0]] && req[k.split(".")[0]][k.split(".")[1]];
+    const params = k.includes(".")
+      ? req[k.split(".")[0]] && req[k.split(".")[0]][k.split(".")[1]]
+      : // @ts-ignore
+        req[k];
 
     if (!params) {
       throw new Error("The key does not exist");
