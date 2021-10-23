@@ -6,15 +6,42 @@ export * from "./types";
 
 export const cache = {} as ICache;
 
+const redisKeys = [] as Array<String>;
+
 const alreadyAdded = async (key: string): Promise<void> => {
   if (await cache.get(key)) cache.delete(key);
 };
 
-export class Cache {
-  constructor({ host, port, keyPrefix, password }: IInit) {
-    if (!(host && port && keyPrefix && password)) {
-      throw new Error("Host, port, keyPrefix and password must be necessary");
+export const createKeyString = (req: Request) => {
+  const keysToAdd = [];
+
+  for (const k of redisKeys) {
+    const params = // @ts-ignore
+      req[k.split(".")[0]] && req[k.split(".")[0]][k.split(".")[1]];
+
+    if (!params) {
+      throw new Error("The key does not exist");
     }
+
+    keysToAdd.push(params);
+  }
+
+  let str = "";
+
+  keysToAdd.map((key, index) => (str = index === 0 ? key : str + " : " + key));
+
+  return str;
+};
+
+export class Cache {
+  constructor({ host, port, keyPrefix, password, keys }: IInit) {
+    if (!(host && port && keyPrefix && password && keys)) {
+      throw new Error(
+        "Host, port, keyPrefix, keys and password must be necessary"
+      );
+    }
+
+    redisKeys.push(...keys);
 
     const redis = new Redis({
       host,
@@ -40,12 +67,14 @@ export class Cache {
     redis.on("error", (error: string): void => console.error(error));
 
     cache.post = async (key, value, expiresIn = 60 * 60 * 8) => {
+      console.log(key);
       await alreadyAdded(key);
 
       redis.set(key, JSON.stringify(value), ["NX", "EX"], expiresIn);
     };
 
     cache.get = async (key) => {
+      console.log(key);
       const cached = await redis.get(key);
 
       return cached ? JSON.parse(cached) : null;
@@ -58,12 +87,7 @@ export class Cache {
 }
 
 const GET = async (req: Request) => {
-  const model = req.url.split("?")[0]?.replace("/", "");
-
-  const { query } = req;
-  const { id } = query;
-
-  return cache.get(`${model} : ${id}`);
+  return cache.get(createKeyString(req));
 };
 
 export const middleware = async (
