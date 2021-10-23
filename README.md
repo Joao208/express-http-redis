@@ -64,7 +64,7 @@ import "express-async-errors";
 import cors from "cors";
 import http from "http";
 import responseTime from "response-time";
-import { cache, Cache, middleware, createKeyString } from "..";
+import { cache, Cache, middleware, createKeyString } from "express-http-redis";
 
 const port = 5000;
 
