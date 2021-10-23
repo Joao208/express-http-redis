@@ -1,6 +1,60 @@
 ## Express Http Redis
 
-How to use:
+By using this library your requests time is reduced by 80% <br>
+The library intercepts the get requests and returns the response that was saved in its cache.
+For use, you need the host, port, key prefix and password of Redis, and keys (Keys are one string with the path of params for lib used to create key).
+
+Example of using keys
+
+```js
+['query.id','params.route'] // route:?id=1
+['params.id'] // :id
+['url'] // /create/user
+```
+
+Middleware can be used globally or in just one route, for example <br>
+The problem with using middleware with global status is that the library cannot access route.params
+
+```js
+app.use(middleware)
+
+// or
+
+app.get("/", middleware, (req, res) => {
+  return res.json("ok");
+})
+```
+
+But how does the construction of keys work? <br>
+The keys are built in the pattern: parameter1 : parameter2 : parameter3... <br>
+But you don't need to keep building the key whenever you need to query or create a cache, you can use the `createKeyString` function exported from the library, passing only the req
+An example of use
+
+```js
+cache.delete(createKeyString(req));
+```
+
+The library also exports all used interfaces, you can access it in the two ways below
+
+```js
+import { ICache, IInit, IObj } from "express-http-redis";
+
+// or
+
+import { ICache, IInit, IObj } from "express-http-redis/types";
+```
+
+Dentro da exportação `cache` possui 3 métodos: `delete`, `post`, `get`
+
+```js
+cache.post(createKeyString(req), {});
+
+cache.delete(createKeyString(req));
+
+cache.get(createKeyString(req))
+```
+
+The full use of the library looks like this:
 
 ```js
 import "dotenv/config";
