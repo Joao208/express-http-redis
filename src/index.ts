@@ -1,10 +1,14 @@
 import Redis from "ioredis";
 import { NextFunction, Request, Response } from "express";
-import { IInit, IObj, ICache } from "./types";
+import { ICache, IInit, IObj } from "./types";
 
 export * from "./types";
 
 export const cache = {} as ICache;
+
+const alreadyAdded = async (key: string): Promise<void> => {
+  if (await cache.get(key)) cache.delete(key);
+};
 
 export class Cache {
   constructor({ host, port, keyPrefix, password }: IInit) {
@@ -35,8 +39,10 @@ export class Cache {
 
     redis.on("error", (error: string): void => console.error(error));
 
-    cache.set = (key, value, expiresIn = 60 * 60 * 8) => {
-      return redis.set(key, JSON.stringify(value), ["NX", "EX"], expiresIn);
+    cache.post = async (key, value, expiresIn = 60 * 60 * 8) => {
+      await alreadyAdded(key);
+
+      redis.set(key, JSON.stringify(value), ["NX", "EX"], expiresIn);
     };
 
     cache.get = async (key) => {
@@ -45,67 +51,51 @@ export class Cache {
       return cached ? JSON.parse(cached) : null;
     };
 
-    cache.invalidate = (key) => {
+    cache.delete = (key) => {
       return redis.del(key);
     };
   }
 }
 
 const GET = async (req: Request) => {
-  return cache.get(req.url);
+  const model = req.url.split("?")[0]?.replace("/", "");
+
+  const { query } = req;
+  const { id } = query;
+
+  return cache.get(`${model} : ${id}`);
 };
-
-// const POST = async (body: Object) => {
-//   const { users } = await cache.get("users");
-
-//   cache.invalidate("users");
-//   cache.set("users", { users: [...users, body] });
-// };
-
-// const DELETE = async (body: IBody) => {
-//   const { UserId } = body;
-
-//   const { users } = await cache.get("users");
-
-//   const deletedUsers = users.filter(({ id }: { id: number }) => id !== UserId);
-
-//   cache.invalidate("users");
-//   cache.set("users", { users: deletedUsers });
-// };
 
 export const middleware = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { method } = req;
-
-  const oldEnd = res.end;
+  const { method, query, params } = req;
+  const { id } = query;
 
   const chunks = [] as Array<Buffer>;
 
-  if (req.method === "GET") {
-    res.end = function (chunk) {
-      if (chunk) chunks.push(chunk);
-
-      const body = Buffer.concat(chunks).toString("utf8");
-
-      cache.set(req.url, body);
-
-      // @ts-ignore
-      oldEnd.apply(res, arguments);
-    };
-  }
-
   const obj = {
     GET,
-    // POST,
-    // DELETE,
   } as IObj;
 
   if (!obj[method]) return next();
 
   if (["GET"].includes(method)) {
+    const oldEnd = res.end;
+
+    res.end = async function (chunk) {
+      if (chunk) chunks.push(chunk);
+
+      const body = Buffer.concat(chunks).toString("utf8");
+
+      if (id) await cache.post(`${params.model} : ${id}`, body);
+
+      // @ts-ignore
+      oldEnd.apply(res, arguments);
+    };
+
     const response = await obj[method](req);
 
     if (response) {

@@ -1,8 +1,12 @@
 import { Request } from "express";
 export interface ICache {
-  set(key: string, value: Object, expiresIn?: number | undefined): void;
+  post(
+    key: string,
+    value: Object,
+    expiresIn?: number | undefined
+  ): Promise<void>;
   get(key: string): Promise<string>;
-  invalidate(key: string): void;
+  delete(key: string): void;
 }
 
 export interface IInit {
