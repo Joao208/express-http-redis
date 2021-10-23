@@ -7,9 +7,9 @@ For use, you need the host, port, key prefix and password of Redis, and keys (Ke
 Example of using keys
 
 ```js
-['query.id','params.route'] // route:?id=1
-['params.id'] // :id
-['url'] // /create/user
+['query.id','params.route'] // key: `${req.query.id} : ${req.params.route}`
+['params.id'] // key: `${req.params.id}`
+['url'] // key: `${req.url}`
 ```
 
 Middleware can be used globally or in just one route, for example <br>
