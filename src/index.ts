@@ -25,10 +25,6 @@ export const createKeyString = (req: IRequest) => {
       : // @ts-ignore
         req[k];
 
-    if (!params) {
-      throw new Error("The key does not exist");
-    }
-
     keysToAdd.push(params);
   }
 
