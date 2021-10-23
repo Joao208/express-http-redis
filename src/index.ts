@@ -71,10 +71,7 @@ export const middleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { method, query, params } = req;
-  const { id } = query;
-
-  const chunks = [] as Array<Buffer>;
+  const { method } = req;
 
   const obj = {
     GET,
@@ -83,19 +80,6 @@ export const middleware = async (
   if (!obj[method]) return next();
 
   if (["GET"].includes(method)) {
-    const oldEnd = res.end;
-
-    res.end = async function (chunk) {
-      if (chunk) chunks.push(chunk);
-
-      const body = Buffer.concat(chunks).toString("utf8");
-
-      if (id) await cache.post(`${params.model} : ${id}`, body);
-
-      // @ts-ignore
-      oldEnd.apply(res, arguments);
-    };
-
     const response = await obj[method](req);
 
     if (response) {
