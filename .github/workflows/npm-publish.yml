@@ -18,7 +18,7 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - run: git config --global user.name 'joao208'
       - run: git config --global user.email 'joao.augusto@foodzilla.com.br'
-      - run: npm ci
+      - run: yarn
       - run: npm run build
 
   publish-npm:
@@ -33,8 +33,8 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - run: git config --global user.name 'joao208'
       - run: git config --global user.email 'joao.augusto@foodzilla.com.br'
-      - run: npm ci
-      - run: npm run build
+      - run: yarn
+      - run: yarn build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
