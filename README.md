@@ -44,7 +44,7 @@ import { ICache, IInit, IObj } from "express-http-redis";
 import { ICache, IInit, IObj } from "express-http-redis/types";
 ```
 
-Dentro da exportação `cache` possui 3 métodos: `delete`, `post`, `get`
+Inside the `cache` export there are 3 methods: `delete`, `post`, `get`
 
 ```js
 cache.post(createKeyString(req), {});
