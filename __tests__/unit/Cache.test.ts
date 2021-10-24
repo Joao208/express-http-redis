@@ -4,6 +4,21 @@ import Redis from "ioredis";
 jest.mock("ioredis");
 
 describe("[Cache] Test case", () => {
+  it("Should throw an error if any parameter is not passed", () => {
+    expect.assertions(1);
+
+    try {
+      new Cache({
+        host: "100",
+        keys: ["params.name"],
+      });
+    } catch (error) {
+      expect(error.message).toBe(
+        "Host, port, keyPrefix, keys and password must be necessary"
+      );
+    }
+  });
+
   it("Should test class and set cache function params", () => {
     const redisResponse = {
       set: jest.fn().mockReturnValue({

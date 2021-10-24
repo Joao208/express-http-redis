@@ -17,5 +17,6 @@ export default {
     params: {},
     headers: { authorization: "" },
     query: {},
+    url: "",
   } as Request,
 };
