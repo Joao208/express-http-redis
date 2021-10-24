@@ -15,7 +15,7 @@ Example of using keys
 ```
 
 Middleware can be used globally or in just one route, for example <br>
-The problem with using middleware with global status is that the library cannot access route.params
+The problem with using middleware with global status is that the library cannot access req.params
 
 ```js
 app.use(middleware)
