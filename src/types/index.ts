@@ -20,3 +20,7 @@ export interface IInit {
 export interface IObj {
   [key: string]: (req: Request) => Promise<string | void>;
 }
+
+export interface IRequest extends Request {
+  [key: string]: any;
+}

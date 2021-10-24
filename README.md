@@ -1,5 +1,7 @@
 ## Express Http Redis
 
+[![codecov](https://codecov.io/gh/Joao208/express-http-redis/branch/main/graph/badge.svg?token=50MD3A8XVM)](https://codecov.io/gh/Joao208/express-http-redis)
+
 By using this library your requests time is reduced by 80% <br>
 The library intercepts the get requests and returns the response that was saved in its cache.
 For use, you need the host, port, key prefix and password of Redis, and keys (Keys are one string with the path of params for lib used to create key).

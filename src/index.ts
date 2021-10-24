@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 import { NextFunction, Request, Response } from "express";
-import { ICache, IInit, IObj } from "./types";
+import { ICache, IInit, IObj, IRequest } from "./types";
 
 export * from "./types";
 
@@ -8,13 +8,9 @@ export const cache = {} as ICache;
 
 const redisKeys = [] as Array<String>;
 
-const alreadyAdded = async (key: string): Promise<void> => {
+export const alreadyAdded = async (key: string): Promise<void> => {
   if (await cache.get(key)) cache.delete(key);
 };
-
-interface IRequest extends Request {
-  [key: string]: any;
-}
 
 export const createKeyString = (req: IRequest) => {
   const keysToAdd = [];
@@ -69,14 +65,12 @@ export class Cache {
     redis.on("error", (error: string): void => console.error(error));
 
     cache.post = async (key, value, expiresIn = 60 * 60 * 8) => {
-      console.log(key);
       await alreadyAdded(key);
 
       redis.set(key, JSON.stringify(value), ["NX", "EX"], expiresIn);
     };
 
     cache.get = async (key) => {
-      console.log(key);
       const cached = await redis.get(key);
 
       return cached ? JSON.parse(cached) : null;
@@ -114,8 +108,6 @@ export const middleware = async (
         .json(typeof response === "string" ? JSON.parse(response) : response);
     }
   }
-
-  await obj[method](req);
 
   return next();
 };
