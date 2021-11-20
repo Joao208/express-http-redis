@@ -87,7 +87,7 @@ new Cache({
   port: process.env.PORT,
   keyPrefix: process.env.KEYPREFIX,
   password: process.env.PASSWORD,
-  keys: ["params.id", "keys.number"],
+  keys: ["params.id", "query.number"],
 });
 
 app.post("/:id", middleware, (req, res) => {
