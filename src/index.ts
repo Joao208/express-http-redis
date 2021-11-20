@@ -6,7 +6,7 @@ export * from "./types";
 
 export const cache = {} as ICache;
 
-const redisKeys = [] as Array<String>;
+const redisKeys = [] as Array<string>;
 
 export const alreadyAdded = async (key: string): Promise<void> => {
   if (await cache.get(key)) cache.delete(key);
@@ -26,7 +26,9 @@ export const createKeyString = (req: IRequest) => {
 
   let str = "";
 
-  keysToAdd.map((key, index) => (str = index === 0 ? key : str + " : " + key));
+  keysToAdd.forEach(
+    (key, index) => (str = index === 0 ? key : str + " : " + key)
+  );
 
   return str;
 };

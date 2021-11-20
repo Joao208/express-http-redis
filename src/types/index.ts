@@ -14,7 +14,7 @@ export interface IInit {
   port?: string;
   keyPrefix?: string;
   password?: string;
-  keys?: Array<String>;
+  keys?: Array<string>;
 }
 
 export interface IObj {
