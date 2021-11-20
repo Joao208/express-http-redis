@@ -1,6 +1,7 @@
 ## Express Http Redis
 
 [![codecov](https://codecov.io/gh/Joao208/express-http-redis/branch/main/graph/badge.svg?token=50MD3A8XVM)](https://codecov.io/gh/Joao208/express-http-redis)
+[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=Joao208_express-http-redis&metric=alert_status)](https://sonarcloud.io/dashboard?id=Joao208_express-http-redis)
 
 By using this library your requests time is reduced by 80% <br>
 The library intercepts the get requests and returns the response that was saved in its cache.
